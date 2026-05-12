@@ -239,6 +239,41 @@ void doSearchByIngredient(const Cookbook& cookbook) {
     cookbook.searchByIngredient(ingName);
 }
 
+// ---------- scale servings ----------
+
+void doScaleServings(const Cookbook& cookbook) {
+    cout << "\n--- SCALE SERVINGS ---" << endl;
+    int id = readInt("Recipe ID: ");
+    Recipe* r = cookbook.findById(id);
+    if (r == nullptr) {
+        cout << "Recipe not found." << endl;
+        return;
+    }
+
+    cout << "Current servings: " << r->getServings() << endl;
+    int target = readInt("Target servings: ");
+
+    if (target <= 0) {
+        cout << "Servings must be positive." << endl;
+        return;
+    }
+
+    float factor = (float)target / r->getServings();
+    const vector<Ingredient>& ings = r->getIngredients();
+
+    cout << "\nScaled ingredients for \"" << r->getName()
+         << "\" (" << target << " servings):" << endl;
+
+    if (ings.empty()) {
+        cout << "  (no ingredients)" << endl;
+        return;
+    }
+    for (int i = 0; i < (int)ings.size(); i++) {
+        cout << "  - " << ings[i].scale(factor) << endl;
+    }
+    cout << "(Original recipe unchanged)" << endl;
+}
+
 // ---------- main ----------
 
 int main() {
@@ -249,6 +284,7 @@ int main() {
         cout << "1. Recipe Management" << endl;
         cout << "2. Tag Management" << endl;
         cout << "3. Search by Ingredient" << endl;
+        cout << "4. Scale Servings" << endl;
         cout << "0. Exit" << endl;
         int choice = readInt("Choice: ");
 
@@ -256,6 +292,7 @@ int main() {
         else if (choice == 1) recipeMenu(cookbook);
         else if (choice == 2) tagMenu(cookbook);
         else if (choice == 3) doSearchByIngredient(cookbook);
+        else if (choice == 4) doScaleServings(cookbook);
         else cout << "Invalid option." << endl;
     }
 
