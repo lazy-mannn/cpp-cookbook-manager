@@ -161,6 +161,76 @@ void recipeMenu(Cookbook& cookbook) {
     }
 }
 
+// ---------- tag management ----------
+
+void doCreateTag(Cookbook& cookbook) {
+    cout << "\n--- CREATE TAG ---" << endl;
+    string name = readLine("Tag name: ");
+    try {
+        Tag t = cookbook.addTag(name);
+        cout << "Tag created: " << t << endl;
+    } catch (invalid_argument& e) {
+        cout << "Error: " << e.what() << endl;
+    }
+}
+
+void doListTags(const Cookbook& cookbook) {
+    cout << "\n--- ALL TAGS ---" << endl;
+    const vector<Tag>& tags = cookbook.getTags();
+    if (tags.empty()) {
+        cout << "  No tags created yet." << endl;
+        return;
+    }
+    for (int i = 0; i < (int)tags.size(); i++) {
+        cout << "  " << tags[i] << endl;
+    }
+}
+
+void doAssignTag(Cookbook& cookbook) {
+    cout << "\n--- ASSIGN TAG TO RECIPE ---" << endl;
+    doListTags(cookbook);
+    int tagId = readInt("Tag ID: ");
+    int recipeId = readInt("Recipe ID: ");
+
+    const vector<Tag>& tags = cookbook.getTags();
+    const Tag* found = nullptr;
+    for (int i = 0; i < (int)tags.size(); i++) {
+        if (tags[i].getId() == tagId) {
+            found = &tags[i];
+            break;
+        }
+    }
+    if (found == nullptr) {
+        cout << "Tag not found." << endl;
+        return;
+    }
+    Recipe* r = cookbook.findById(recipeId);
+    if (r == nullptr) {
+        cout << "Recipe not found." << endl;
+        return;
+    }
+    r->addTag(*found);
+    cout << "Tag \"" << found->getName() << "\" assigned to \""
+         << r->getName() << "\"." << endl;
+}
+
+void tagMenu(Cookbook& cookbook) {
+    while (true) {
+        cout << "\n--- TAG MANAGEMENT ---" << endl;
+        cout << "1. Create Tag" << endl;
+        cout << "2. List All Tags" << endl;
+        cout << "3. Assign Tag to Recipe" << endl;
+        cout << "0. Back" << endl;
+        int choice = readInt("Choice: ");
+
+        if (choice == 0) break;
+        else if (choice == 1) doCreateTag(cookbook);
+        else if (choice == 2) doListTags(cookbook);
+        else if (choice == 3) doAssignTag(cookbook);
+        else cout << "Invalid option." << endl;
+    }
+}
+
 // ---------- main ----------
 
 int main() {
@@ -169,11 +239,13 @@ int main() {
     while (true) {
         cout << "\n=== COOKBOOK MANAGER ===" << endl;
         cout << "1. Recipe Management" << endl;
+        cout << "2. Tag Management" << endl;
         cout << "0. Exit" << endl;
         int choice = readInt("Choice: ");
 
         if (choice == 0) break;
         else if (choice == 1) recipeMenu(cookbook);
+        else if (choice == 2) tagMenu(cookbook);
         else cout << "Invalid option." << endl;
     }
 
