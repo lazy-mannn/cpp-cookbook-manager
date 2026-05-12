@@ -231,6 +231,14 @@ void tagMenu(Cookbook& cookbook) {
     }
 }
 
+// ---------- search by ingredient ----------
+
+void doSearchByIngredient(const Cookbook& cookbook) {
+    cout << "\n--- SEARCH BY INGREDIENT ---" << endl;
+    string ingName = readLine("Ingredient name: ");
+    cookbook.searchByIngredient(ingName);
+}
+
 // ---------- main ----------
 
 int main() {
@@ -240,12 +248,14 @@ int main() {
         cout << "\n=== COOKBOOK MANAGER ===" << endl;
         cout << "1. Recipe Management" << endl;
         cout << "2. Tag Management" << endl;
+        cout << "3. Search by Ingredient" << endl;
         cout << "0. Exit" << endl;
         int choice = readInt("Choice: ");
 
         if (choice == 0) break;
         else if (choice == 1) recipeMenu(cookbook);
         else if (choice == 2) tagMenu(cookbook);
+        else if (choice == 3) doSearchByIngredient(cookbook);
         else cout << "Invalid option." << endl;
     }
 
